@@ -17,6 +17,23 @@ func main() {
 	c.AllowHeaders = []string{"Origin", "Authorization", "Content-Type", "Content-Length", "X-Requested-With"}
 
 	r.Use(cors.New(c))
+
+	r.GET("/watch", func(c *gin.Context) {
+		id := c.Query("v")
+		log.Println("Crawling video", id)
+		v := download.NewVideo(id)
+		if err := v.Load(); err != nil {
+			panic(err)
+		}
+		log.Println(v.Info.Title)
+		stream, err := v.GetAudioStream()
+		if err != nil {
+			c.AbortWithStatusJSON(500, gin.H{"success": false, "error": err.Error()})
+		} else {
+			log.Println("Audio", stream)
+			c.JSON(200, gin.H{"success": true, "title": v.Info.Title, "audio": stream})
+		}
+	})
 	api := r.Group("/api")
 	{
 		api.GET("/video/:key", func(c *gin.Context) {
