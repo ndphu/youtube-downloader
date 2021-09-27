@@ -7,6 +7,9 @@ import (
 	"youtube-downloader/decipher"
 )
 
+const PlayerUrl = "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+const NextUrl = "https://www.youtube.com/youtubei/v1/next?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+
 func NewInfoRequest(id string) *M {
 	signTimestamp, _ := decipher.GetSignatureTimestamp(id)
 	return &M{
@@ -33,7 +36,7 @@ func GetDownloadInfo(id string) (*InfoResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	PlayerUrl := "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
+
 	req, err := http.NewRequest("POST", PlayerUrl, postBody)
 	if err != nil {
 		return nil, err

@@ -52,6 +52,35 @@ func main() {
 				c.JSON(200, gin.H{"success": true, "title": v.Info.Title, "audio": stream})
 			}
 		})
+
+		api.GET("/video/:key/next", func(c *gin.Context) {
+			id := c.Param("key")
+			log.Println("Crawling next video", id)
+			v := download.NewVideo(id)
+			if v, err := v.Next(); err != nil {
+				c.AbortWithStatusJSON(500, gin.H{"success": false, "error": err.Error()})
+				return
+			} else {
+				c.JSON(200, gin.H{"success": true, "videoId": v})
+			}
+		})
+
+		api.GET("/video/:key/nextList", func(c *gin.Context) {
+			id := c.Param("key")
+			log.Println("Crawling next video", id)
+			v := download.NewVideo(id)
+			if videos, err := v.NextList(); err != nil {
+				c.AbortWithStatusJSON(500, gin.H{"success": false, "error": err.Error()})
+				return
+			} else {
+				c.JSON(200, gin.H{"success": true, "videos": videos})
+			}
+
+		})
+
+		api.GET("/list/:key", func(c *gin.Context) {
+
+		})
 	}
 
 	r.Run()

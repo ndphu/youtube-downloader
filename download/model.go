@@ -45,6 +45,35 @@ func (m *M) ToBytesReader() (*bytes.Reader, error) {
 	return bytes.NewReader(marshal), nil
 }
 
+func (m M) GetObject(key string) M {
+	return FromInterface(m[key])
+}
+
+func FromInterface(input interface{}) M {
+	if input == nil {
+		return nil
+	}
+	i := input.(map[string]interface{})
+	res := M{}
+	for k, v := range i {
+		res[k] = v
+	}
+	return res
+}
+
+func (m M) GetArray(key string) []M {
+	items := m[key].([]interface{})
+	res := make([]M, len(items))
+	for i, item := range items {
+		res[i] = FromInterface(item)
+	}
+	return res
+}
+
+func (m M) GetString(key string) string {
+	return m[key].(string)
+}
+
 type DownloadSource struct {
 	Video string `json:"video"`
 	Audio string `json:"audio"`
@@ -73,4 +102,9 @@ type YoutubeImage struct {
 	Url    string `json:"url"`
 	Width  int    `json:"width"`
 	Height int    `json:"height"`
+}
+
+type VideoItem struct {
+	Id    string `json:"id"`
+	Title string `json:"title"`
 }
