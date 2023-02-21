@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"log"
 	"os"
 	"youtube-downloader/download"
@@ -81,6 +82,20 @@ func main() {
 
 		api.GET("/list/:key", func(c *gin.Context) {
 
+		})
+
+		api.GET("/cache", func(c *gin.Context) {
+			decipher, err := ioutil.ReadFile(".cache.decipherOps")
+			if err != nil {
+				c.JSON(500, gin.H{"success": false, "message": "Fail to read \".cache.decipherOps\"", "error": err.Error()})
+				return
+			}
+			signature, err := ioutil.ReadFile(".cache.signature")
+			if err != nil {
+				c.JSON(500, gin.H{"success": false, "message": "Fail to read \".cache.signature\"", "error": err.Error()})
+				return
+			}
+			c.JSON(200, gin.H{"success": true, "decipher": string(decipher), "signature": string(signature)})
 		})
 
 		api.GET("/clearCache", func(c *gin.Context) {
