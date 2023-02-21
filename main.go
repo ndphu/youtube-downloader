@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 	"youtube-downloader/download"
 )
 
@@ -80,6 +81,19 @@ func main() {
 
 		api.GET("/list/:key", func(c *gin.Context) {
 
+		})
+
+		api.GET("/clearCache", func(c *gin.Context) {
+			if err := os.Remove(".cache.decipherOps"); err != nil {
+				c.JSON(500, gin.H{"success": false, "message": "Fail to remove \".cache.decipherOps\"", "error": err.Error()})
+				return
+			}
+			if err := os.Remove(".cache.signature"); err != nil {
+				c.JSON(500, gin.H{"success": false, "message": "Fail to remove \".cache.signature\"", "error": err.Error()})
+				return
+			}
+
+			c.JSON(200, gin.H{"success": true})
 		})
 	}
 
